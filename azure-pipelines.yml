@@ -7,13 +7,31 @@ pool:
 vmImage: "ubuntu-latest"
 
 stages:
-  stage: Terraform init
+  stage: TerraformInstaller
   jobs:
     - job: TerraformInit
       steps:
         - task: TerraformInstaller@1
           inputs:
             terraformVersion: "latest"
-        - script: |
-            terraform init
-          displayName: "Terraform Init"
+
+  stage: Terraform Init
+ jobs: 
+  -  job: TerraformInit                
+     steps:
+    - task: TerraformTask@5
+        nputs:
+          provider: 'azurerm'
+          command: 'init'
+          backendServiceArm: 'Azure Devops(e6787d56-1b3f-4a67-81b3-ed99c2f02315)'
+          backendAzureRmOverrideSubscriptionID: 'e6787d56-1b3f-4a67-81b3-ed99c2f02315'
+          backendAzureRmResourceGroupName: 'etc-azuredevops-001'
+          backendAzureRmStorageAccountName: 'etcstorageaccount001'
+          backendAzureRmContainerName: 'tfstate'
+          backendAzureRmKey: 'prod.terraform.tfstate'
+
+  - task: TerraformTask@5
+      inputs:
+        provider: 'azurerm'
+        command: 'plan'
+          
