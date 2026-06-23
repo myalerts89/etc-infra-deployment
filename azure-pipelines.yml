@@ -4,35 +4,30 @@ include:
 - main
 
 pool:
-  vmImage: 'ubuntu-latest'
+vmImage: 'ubuntu-latest'
 
 stages:
-
-* stage: TerraformInstaller
-   displayName: 'Install Terraform'
-  jobs:
-  * job: TerraformInstaller
+stage: TerraformInstaller
+  displayName: 'Install Terraform'
+    jobs:
+    - job: TerraformInstaller
        steps:
+        - task: TerraformInstaller@1
+        - inputs:
+          terraformVersion: 'latest'
 
-    * task: TerraformInstaller@1
-      inputs:
-      terraformVersion: 'latest'
-
-* stage: TerraformInitAndPlan
+  stage: TerraformInitAndPlan
   displayName: 'Terraform Init and Plan'
   dependsOn: TerraformInstaller
-  jobs:
-
-  * job: TerraformInit
-    steps:
-
-    * checkout: self
-
-    * task: TerraformInstaller@1
+    jobs:
+    - job: TerraformInit
+     steps:
+     - checkout: self
+        - task: TerraformInstaller@1
       inputs:
       terraformVersion: 'latest'
 
-    * task: TerraformTask@5
+    - task: TerraformTask@5
       displayName: 'Terraform Init'
       inputs:
       provider: 'azurerm'
@@ -43,7 +38,7 @@ stages:
       backendAzureRmContainerName: 'tfstate'
       backendAzureRmKey: 'prod.terraform.tfstate'
 
-    * task: TerraformTask@5
+    - task: TerraformTask@5
       displayName: 'Terraform Plan'
       inputs:
       provider: 'azurerm'
