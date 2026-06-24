@@ -29,15 +29,7 @@ stages:
             provider: 'azurerm'
             command: 'plan'
             environmentServiceNameAzureRM: 'Azure Devops(e6787d56-1b3f-4a67-81b3-ed99c2f02315)'
-  
-  - stage: Applyphase
-    jobs:
-      - job: terraformapply
-        steps:
-        - task: TerraformInstaller@1
-          inputs:
-            terraformVersion: 'latest'
-
+                    
         - task: TerraformTask@5
           displayName: Apply-Phase
           inputs:
