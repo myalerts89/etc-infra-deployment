@@ -8,7 +8,11 @@ stages:
     jobs:
       - job: terraformInstallation
         steps:  
+        - task: TerraformInstaller@1
+          inputs:
+            terraformVersion: 'latest'
         - task: TerraformTask@5
+          displayName: terrafrom-Init
           inputs:
              provider: 'azurerm'
              command: 'init'
@@ -20,12 +24,14 @@ stages:
              backendAzureRmKey: 'prod.terraform.tfstate'     
 
         - task: TerraformTask@5
+          displayName: Plan-Phase
           inputs:
             provider: 'azurerm'
             command: 'plan'
             environmentServiceNameAzureRM: 'Azure Devops(e6787d56-1b3f-4a67-81b3-ed99c2f02315)'
 
         - task: TerraformTask@5
+          displayName: Apply-Phase
           inputs:
             provider: 'azurerm'
             command: 'apply'
