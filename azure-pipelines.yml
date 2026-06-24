@@ -1,46 +1,33 @@
 trigger:
-branches:
-include:
-- main
+  - main
 
 pool:
-vmImage: 'ubuntu-latest'
-
+  vmImage: 'ubuntu-latest'
 stages:
-stage: TerraformInstaller
-  displayName: 'Install Terraform'
+  - stage: terraform
     jobs:
-    - job: TerraformInstaller
-       steps:
-        - task: TerraformInstaller@1
-        - inputs:
-          terraformVersion: 'latest'
+      - job: terraformInstallation
+        steps:  
+        - task: TerraformTask@5
+          inputs:
+             provider: 'azurerm'
+             command: 'init'
+             backendServiceArm: 'Azure Devops(e6787d56-1b3f-4a67-81b3-ed99c2f02315)'
+             backendAzureRmOverrideSubscriptionID: 'e6787d56-1b3f-4a67-81b3-ed99c2f02315'
+             backendAzureRmResourceGroupName: 'etc-azuredevops-001'
+             backendAzureRmStorageAccountName: 'etcstorageaccount001'
+             backendAzureRmContainerName: 'tfstate'
+             backendAzureRmKey: 'prod.terraform.tfstate'     
 
-  stage: TerraformInitAndPlan
-  displayName: 'Terraform Init and Plan'
-  dependsOn: TerraformInstaller
-    jobs:
-    - job: TerraformInit
-     steps:
-     - checkout: self
-        - task: TerraformInstaller@1
-      inputs:
-      terraformVersion: 'latest'
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'plan'
+            environmentServiceNameAzureRM: 'Azure Devops(e6787d56-1b3f-4a67-81b3-ed99c2f02315)'
 
-    - task: TerraformTask@5
-      displayName: 'Terraform Init'
-      inputs:
-      provider: 'azurerm'
-      command: 'init'
-      backendServiceArm: 'Azure Devops'
-      backendAzureRmResourceGroupName: 'etc-azuredevops-001'
-      backendAzureRmStorageAccountName: 'etcstorageaccount001'
-      backendAzureRmContainerName: 'tfstate'
-      backendAzureRmKey: 'prod.terraform.tfstate'
-
-    - task: TerraformTask@5
-      displayName: 'Terraform Plan'
-      inputs:
-      provider: 'azurerm'
-      command: 'plan'
-      environmentServiceNameAzureRM: 'Azure Devops'
+        - task: TerraformTask@5
+          inputs:
+            provider: 'azurerm'
+            command: 'apply'
+            environmentServiceNameAzureRM: 'Azure Devops(e6787d56-1b3f-4a67-81b3-ed99c2f02315)'
+     
