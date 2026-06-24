@@ -34,6 +34,9 @@ stages:
     jobs:
       - job: terraformapply
         steps:
+        - task: TerraformInstaller@1
+          inputs:
+            terraformVersion: 'latest'
 
         - task: TerraformTask@5
           displayName: Apply-Phase
